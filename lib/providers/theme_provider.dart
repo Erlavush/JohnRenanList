@@ -128,6 +128,10 @@ class ThemeProvider extends ChangeNotifier {
     }
   }
 
+
+  // Compatibility alias
+  Color get cardColor => cardBackgroundColor;
+
   BoxBorder? getCardBorder({required bool isPanicMode}) {
     switch (_currentTheme) {
       case AppTheme.cyberpunk:

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/theme_provider.dart';
+import '../providers/assignments_provider.dart'; // Import Provider
 import '../widgets/deadline_card.dart';
 import '../widgets/theme_switcher.dart';
 import '../widgets/cyberpunk_background.dart';
@@ -36,52 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  // Mock Data
-  List<Map<String, dynamic>> get _mockAssignments {
-    final now = DateTime.now();
-    return [
-      {
-        'id': '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
-        'title': 'AI Ethics Essay',
-        'subject': 'CS 302',
-        'deadline': now.add(const Duration(hours: 18)), // 18h from now
-        'description': 'Write 2000 words on the impact of LLMs on junior developer roles.',
-        'isUrgent': true,
-      },
-      {
-         'id': '550e8400-e29b-41d4-a716-446655440000',
-         'title': 'Calculus Final Project',
-         'subject': 'MATH 401',
-         'deadline': now.add(const Duration(hours: 3)), // 3h from now
-         'description': 'Complete the differential equations set and visualize the vector fields using Python.',
-         'isUrgent': true,
-      },
-      {
-        'id': '6ba7b811-9dad-11d1-80b4-00c04fd430c9',
-        'title': 'React Native Widget',
-        'subject': 'MOB 101',
-        'deadline': now.add(const Duration(days: 2)), // 2 days
-        'description': 'Implement the home screen widget using native modules for Android and iOS.',
-        'isUrgent': false,
-      },
-      {
-        'id': '7ba7b812-9dad-11d1-80b4-00c04fd430d0',
-        'title': 'Database Architecture',
-        'subject': 'SYS 200',
-        'deadline': now.add(const Duration(days: 5)), 
-        'description': 'Design the schema for the new e-commerce platform including foreign keys and indexes.',
-        'isUrgent': false,
-      },
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
-    final assignments = _mockAssignments..sort((a, b) => (a['deadline'] as DateTime).compareTo(b['deadline'] as DateTime));
+    // consume assignments from provider
+    final assignmentsProvider = Provider.of<AssignmentsProvider>(context);
+    final assignments = assignmentsProvider.assignments;
 
-    // Calculate background based on theme for the whole scaffold if needed, but ThemeProvider handles scaffold bg usually
-    
     return AnimatedContainer(
       duration: const Duration(milliseconds: 500),
       color: theme.backgroundColor,
@@ -110,16 +72,30 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 48),
 
                         // Assignments Grid (Column for mobile)
-                        ...assignments.map((a) => DeadlineCard(
-                          id: a['id'] as String,
-                          title: a['title'] as String,
-                          subject: a['subject'] as String,
-                          deadline: a['deadline'] as DateTime,
-                          description: a['description'] as String,
-                          isUrgent: a['isUrgent'] as bool,
-                        )).toList(),
+                        if (assignments.isEmpty)
+                          Center(
+                            child: Text(
+                              "NO ACTIVE TASKS",
+                              style: TextStyle(
+                                color: theme.secondaryTextColor,
+                                fontSize: 18,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                          )
+                        else
+                          ...assignments.map((a) => DeadlineCard(
+                            id: a.id,
+                            title: a.title,
+                            subject: a.subject,
+                            deadline: a.deadline,
+                            description: a.description,
+                            // Recalculate urgency dynamically if needed, or trust the model
+                            // Ideally urgency is derived from deadline, but let's pass a safe value
+                            isUrgent: a.deadline.difference(DateTime.now()).inHours < 24 && !a.deadline.difference(DateTime.now()).isNegative, 
+                          )).toList(),
                         
-                        const SizedBox(height: 80), // Padding for FAB space if needed or bottom scroll
+                        const SizedBox(height: 80),
                       ],
                     ),
                   ),
@@ -159,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                            fontSize: 18, 
                            fontWeight: FontWeight.bold,
-                           fontFamily: 'Inter', // Default flutter font or ensure imported
+                           fontFamily: 'Inter',
                            color: theme.textColor,
                            height: 1.0,
                         ),
@@ -251,7 +227,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
 
-        // Server Time (Hidden on small screens in prototype, but we can show it here if space permits)
         if (MediaQuery.of(context).size.width > 600)
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,

@@ -1,37 +1,75 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/deadline_card.dart';
+import '../widgets/theme_switcher.dart';
+import '../widgets/cyberpunk_background.dart';
+import '../widgets/animated_logo.dart';
+import 'admin_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  // Mock Data: 4 assignments with varying deadlines
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Timer _clockTimer;
+  DateTime _now = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _clockTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _now = DateTime.now();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _clockTimer.cancel();
+    super.dispose();
+  }
+
+  // Mock Data
   List<Map<String, dynamic>> get _mockAssignments {
     final now = DateTime.now();
     return [
       {
-        'title': 'Algorithm Quiz',
-        'subject': 'CS 301',
-        'deadline': now.add(const Duration(hours: 3)),
+        'id': '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+        'title': 'AI Ethics Essay',
+        'subject': 'CS 302',
+        'deadline': now.add(const Duration(hours: 18)), // 18h from now
+        'description': 'Write 2000 words on the impact of LLMs on junior developer roles.',
         'isUrgent': true,
       },
       {
-        'title': 'Calculus Final',
-        'subject': 'MATH 201',
-        'deadline': now.add(const Duration(hours: 18)),
-        'isUrgent': true,
+         'id': '550e8400-e29b-41d4-a716-446655440000',
+         'title': 'Calculus Final Project',
+         'subject': 'MATH 401',
+         'deadline': now.add(const Duration(hours: 3)), // 3h from now
+         'description': 'Complete the differential equations set and visualize the vector fields using Python.',
+         'isUrgent': true,
       },
       {
-        'title': 'Physics Lab Report',
-        'subject': 'PHYS 102',
-        'deadline': now.add(const Duration(hours: 48)),
+        'id': '6ba7b811-9dad-11d1-80b4-00c04fd430c9',
+        'title': 'React Native Widget',
+        'subject': 'MOB 101',
+        'deadline': now.add(const Duration(days: 2)), // 2 days
+        'description': 'Implement the home screen widget using native modules for Android and iOS.',
         'isUrgent': false,
       },
       {
-        'title': 'History Research Paper',
-        'subject': 'HIST 101',
-        'deadline': now.add(const Duration(days: 5)),
+        'id': '7ba7b812-9dad-11d1-80b4-00c04fd430d0',
+        'title': 'Database Architecture',
+        'subject': 'SYS 200',
+        'deadline': now.add(const Duration(days: 5)), 
+        'description': 'Design the schema for the new e-commerce platform including foreign keys and indexes.',
         'isUrgent': false,
       },
     ];
@@ -40,159 +78,205 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
+    final assignments = _mockAssignments..sort((a, b) => (a['deadline'] as DateTime).compareTo(b['deadline'] as DateTime));
 
+    // Calculate background based on theme for the whole scaffold if needed, but ThemeProvider handles scaffold bg usually
+    
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
+      duration: const Duration(milliseconds: 500),
       color: theme.backgroundColor,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: _buildAppBar(context, theme),
-        body: _buildBody(context, theme),
-        floatingActionButton: _buildFAB(context, theme),
+        body: Stack(
+          children: [
+            // Background Decor
+            const CyberpunkBackground(),
+
+            Column(
+              children: [
+                // Navbar
+                _buildNavbar(context, theme),
+
+                // Main Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48), // px-6 py-12
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header Section
+                        _buildHeader(theme, assignments.length),
+
+                        const SizedBox(height: 48),
+
+                        // Assignments Grid (Column for mobile)
+                        ...assignments.map((a) => DeadlineCard(
+                          id: a['id'] as String,
+                          title: a['title'] as String,
+                          subject: a['subject'] as String,
+                          deadline: a['deadline'] as DateTime,
+                          description: a['description'] as String,
+                          isUrgent: a['isUrgent'] as bool,
+                        )).toList(),
+                        
+                        const SizedBox(height: 80), // Padding for FAB space if needed or bottom scroll
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, ThemeProvider theme) {
-    return AppBar(
-      backgroundColor: theme.navbarColor,
-      elevation: 0,
-      title: Row(
-        children: [
-          Icon(
-            Icons.terminal_rounded,
-            color: theme.accentColor,
-            size: 28,
-          ),
-          const SizedBox(width: 12),
-          Text(
-            "JohnRenanList",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: theme.textColor,
-              letterSpacing: 1,
-            ),
-          ),
-        ],
+  Widget _buildNavbar(BuildContext context, ThemeProvider theme) {
+    return Container(
+      height: 80,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: theme.navbarColor, 
+        border: Border(bottom: BorderSide(color: theme.navbarBorderColor, width: 1)),
       ),
-      actions: [
-        // Theme Switcher
-        _ThemeSwitcherButton(
-          icon: Icons.nightlight_round,
-          isActive: theme.currentTheme == AppTheme.cyberpunk,
-          onTap: () => theme.setTheme(AppTheme.cyberpunk),
-          activeColor: theme.accentColor,
-          inactiveColor: theme.secondaryTextColor,
-          tooltip: 'Cyberpunk',
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Logo
+            Row(
+              children: [
+                AnimatedLogo(theme: theme),
+                const SizedBox(width: 12),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                           fontSize: 18, 
+                           fontWeight: FontWeight.bold,
+                           fontFamily: 'Inter', // Default flutter font or ensure imported
+                           color: theme.textColor,
+                           height: 1.0,
+                        ),
+                        children: [
+                          const TextSpan(text: "JohnRenan"),
+                          TextSpan(
+                            text: "List", 
+                            style: TextStyle(
+                               color: theme.currentTheme == AppTheme.light ? Colors.grey[400] : theme.accentColor
+                            )
+                          ),
+                        ]
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      "VIBECODE ED.",
+                      style: TextStyle(
+                        fontSize: 10,
+                        letterSpacing: 2.0,
+                        fontWeight: FontWeight.w500,
+                        color: theme.secondaryTextColor.withOpacity(0.6),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+
+            // Right Actions
+            Row(
+              children: [
+                const ThemeSwitcher(),
+                const SizedBox(width: 24),
+                // Mobile Menu Button (acts as admin link)
+                IconButton(
+                  onPressed: () {
+                     Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AdminScreen()),
+                      );
+                  }, 
+                  icon: Icon(Icons.menu, color: theme.textColor),
+                )
+              ],
+            )
+          ],
         ),
-        _ThemeSwitcherButton(
-          icon: Icons.wb_sunny_rounded,
-          isActive: theme.currentTheme == AppTheme.light,
-          onTap: () => theme.setTheme(AppTheme.light),
-          activeColor: theme.accentColor,
-          inactiveColor: theme.secondaryTextColor,
-          tooltip: 'Light',
+      ),
+    );
+  }
+
+  Widget _buildHeader(ThemeProvider theme, int count) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+             Text(
+               "ACTIVE TASKS",
+               style: TextStyle(
+                 fontSize: 36, // 4xl
+                 fontWeight: FontWeight.w900,
+                 letterSpacing: -1,
+                 color: theme.textColor,
+               ),
+             ),
+             const SizedBox(height: 12),
+             RichText(
+               text: TextSpan(
+                 style: TextStyle(
+                   fontSize: 14,
+                   color: theme.secondaryTextColor,
+                 ),
+                 children: [
+                   const TextSpan(text: "Current number of assignments: "),
+                   TextSpan(
+                     text: "$count",
+                     style: TextStyle(
+                       fontWeight: FontWeight.bold,
+                       color: theme.textColor,
+                     )
+                   )
+                 ]
+               ),
+             )
+          ],
         ),
-        _ThemeSwitcherButton(
-          icon: Icons.water_drop_rounded,
-          isActive: theme.currentTheme == AppTheme.maroon,
-          onTap: () => theme.setTheme(AppTheme.maroon),
-          activeColor: theme.accentColor,
-          inactiveColor: theme.secondaryTextColor,
-          tooltip: 'Maroon',
-        ),
-        const SizedBox(width: 8),
+
+        // Server Time (Hidden on small screens in prototype, but we can show it here if space permits)
+        if (MediaQuery.of(context).size.width > 600)
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+             Text(
+               "SERVER TIME",
+               style: TextStyle(
+                 fontSize: 12,
+                 fontWeight: FontWeight.bold,
+                 letterSpacing: 2.0,
+                 color: theme.currentTheme == AppTheme.cyberpunk ? theme.accentColor : theme.secondaryTextColor.withOpacity(0.5),
+               ),
+             ),
+             const SizedBox(height: 4),
+             Text(
+               DateFormat('HH:mm').format(_now),
+               style: TextStyle(
+                 fontFamily: 'Fira Code',
+                 fontSize: 20,
+                 color: theme.secondaryTextColor.withOpacity(0.8),
+               ),
+             )
+          ],
+        )
       ],
-    );
-  }
-
-  Widget _buildBody(BuildContext context, ThemeProvider theme) {
-    // Sort by deadline
-    final assignments = List<Map<String, dynamic>>.from(_mockAssignments)
-      ..sort((a, b) => (a['deadline'] as DateTime).compareTo(b['deadline'] as DateTime));
-
-    return ListView.builder(
-      padding: const EdgeInsets.only(top: 16, bottom: 100),
-      itemCount: assignments.length,
-      itemBuilder: (context, index) {
-        final a = assignments[index];
-        return DeadlineCard(
-          title: a['title'] as String,
-          subject: a['subject'] as String,
-          deadline: a['deadline'] as DateTime,
-          isUrgent: a['isUrgent'] as bool,
-        );
-      },
-    );
-  }
-
-  Widget _buildFAB(BuildContext context, ThemeProvider theme) {
-    return Tooltip(
-      message: 'NEW_TASK',
-      preferBelow: false,
-      child: FloatingActionButton.large(
-        onPressed: () {
-          // TODO: Add new task functionality
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Add Task Coming Soon!',
-                style: TextStyle(color: theme.textColor),
-              ),
-              backgroundColor: theme.cardColor,
-            ),
-          );
-        },
-        backgroundColor: theme.accentColor,
-        child: const Icon(
-          Icons.add_rounded,
-          size: 36,
-          color: Colors.black,
-        ),
-      ),
-    );
-  }
-}
-
-class _ThemeSwitcherButton extends StatelessWidget {
-  final IconData icon;
-  final bool isActive;
-  final VoidCallback onTap;
-  final Color activeColor;
-  final Color inactiveColor;
-  final String tooltip;
-
-  const _ThemeSwitcherButton({
-    required this.icon,
-    required this.isActive,
-    required this.onTap,
-    required this.activeColor,
-    required this.inactiveColor,
-    required this.tooltip,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: isActive ? activeColor.withOpacity(0.2) : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            icon,
-            color: isActive ? activeColor : inactiveColor,
-            size: 22,
-          ),
-        ),
-      ),
     );
   }
 }

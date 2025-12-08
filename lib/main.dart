@@ -29,15 +29,15 @@ class JohnRenanListApp extends StatelessWidget {
                 ? Brightness.light 
                 : Brightness.dark,
             scaffoldBackgroundColor: themeProvider.backgroundColor,
-            primaryColor: themeProvider.urgentColor,
-            cardColor: themeProvider.cardColor,
+            primaryColor: themeProvider.panicColor,
+            cardColor: themeProvider.cardBackgroundColor,
             colorScheme: ColorScheme(
               brightness: themeProvider.currentTheme == AppTheme.light 
                   ? Brightness.light 
                   : Brightness.dark,
-              primary: themeProvider.urgentColor,
+              primary: themeProvider.panicColor,
               secondary: themeProvider.accentColor,
-              surface: themeProvider.cardColor,
+              surface: themeProvider.cardBackgroundColor,
               error: Colors.red,
               onPrimary: Colors.white,
               onSecondary: Colors.black,

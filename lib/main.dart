@@ -5,13 +5,24 @@ import 'providers/theme_provider.dart';
 import 'providers/assignments_provider.dart';
 import 'screens/home_screen.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart'; // File not found, relying on default init
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+     // DefaultFirebaseOptions is missing, so we rely on google-services.json being present.
+     await Firebase.initializeApp();
+  } catch (e) {
+      print("Firebase Init Failed: $e");
+  }
+  
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => AssignmentsProvider()),
+        ChangeNotifierProvider(create: (_) => AssignmentsProvider()..init()), // Init provider
       ],
       child: const JohnRenanListApp(),
     ),

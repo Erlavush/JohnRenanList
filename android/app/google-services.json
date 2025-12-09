@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "794719282458",
+    "project_id": "johnrenanlist",
+    "storage_bucket": "johnrenanlist.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794719282458:android:94d37dbade7ec204de78a3",
+        "android_client_info": {
+          "package_name": "com.example.john_renan_list"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD90vWv8Of9cy3zmlJOYtn1xH0BMiZCxVk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -110,35 +110,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildNavbar(BuildContext context, ThemeProvider theme) {
     return Container(
-      height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: theme.navbarColor, 
         border: Border(bottom: BorderSide(color: theme.navbarBorderColor, width: 1)),
       ),
       child: SafeArea(
         bottom: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Logo
-            Row(
-              children: [
-                AnimatedLogo(theme: theme),
-                const SizedBox(width: 12),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        style: TextStyle(
-                           fontSize: 18, 
-                           fontWeight: FontWeight.bold,
-                           fontFamily: 'Inter',
-                           color: theme.textColor,
-                           height: 1.0,
-                        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16).copyWith(top: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Logo
+              Row(
+                children: [
+                  AnimatedLogo(theme: theme),
+                  const SizedBox(width: 12),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                             fontSize: 18, 
+                             fontWeight: FontWeight.bold,
+                             fontFamily: 'Inter',
+                             color: theme.textColor,
+                             height: 1.0,
+                          ),
                         children: [
                           const TextSpan(text: "JohnRenan"),
                           TextSpan(
@@ -183,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             )
           ],
+          ),
         ),
       ),
     );

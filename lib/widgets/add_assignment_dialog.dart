@@ -24,6 +24,12 @@ class _AddAssignmentDialogState extends State<AddAssignmentDialog> {
   bool _isUrgent = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Default to a sane time (next hour) if needed, but 23:59 is fine as a default deadline
+  }
+
+  @override
   void dispose() {
     _titleController.dispose();
     _subjectController.dispose();
@@ -42,8 +48,8 @@ class _AddAssignmentDialogState extends State<AddAssignmentDialog> {
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.dark(
               primary: theme.accentColor,
-              onPrimary: Colors.black,
-              surface: theme.cardColor,
+              onPrimary: theme.currentTheme == AppTheme.maroon ? theme.cardTextColor : Colors.black,
+              surface: theme.currentTheme == AppTheme.light ? theme.cardColor : theme.backgroundColor,
               onSurface: theme.textColor,
             ),
             dialogBackgroundColor: theme.backgroundColor,
@@ -66,16 +72,25 @@ class _AddAssignmentDialogState extends State<AddAssignmentDialog> {
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.dark(
               primary: theme.accentColor,
-              onPrimary: Colors.black,
-              surface: theme.cardColor,
+              onPrimary: theme.currentTheme == AppTheme.maroon ? theme.cardTextColor : Colors.black,
+              surface: theme.currentTheme == AppTheme.light ? theme.cardColor : theme.backgroundColor,
               onSurface: theme.textColor,
             ),
              timePickerTheme: TimePickerThemeData(
                backgroundColor: theme.backgroundColor,
-               hourMinuteTextColor: theme.textColor,
+
+               // Time Entry Box Colors
+               hourMinuteColor: theme.currentTheme == AppTheme.maroon 
+                   ? Colors.white // White box for Maroon
+                   : MaterialStateColor.resolveWith((states) => states.contains(MaterialState.selected) ? theme.accentColor.withOpacity(0.5) : theme.cardColor),
+               hourMinuteTextColor: theme.currentTheme == AppTheme.maroon 
+                   ? const Color(0xFF6C1606)  // Red Text for Maroon
+                   : theme.textColor,
                dayPeriodTextColor: theme.textColor,
-               dialHandColor: theme.accentColor,
+               dialHandColor: theme.currentTheme == AppTheme.maroon ? const Color(0xFF6C1606) : theme.accentColor,
                dialBackgroundColor: theme.cardColor,
+               dialTextColor: theme.currentTheme == AppTheme.maroon ? const Color(0xFF6C1606) : theme.textColor,
+               entryModeIconColor: theme.currentTheme == AppTheme.maroon ? const Color(0xFF6C1606) : theme.accentColor,
              )
           ),
           child: child!,
@@ -117,7 +132,7 @@ class _AddAssignmentDialogState extends State<AddAssignmentDialog> {
     
     // Determine Dialog Style based on theme
     Color getBg() => theme.cardColor;
-    Color getText() => theme.textColor;
+    Color getText() => theme.cardTextColor;
     Color getAccent() => theme.accentColor;
 
     return Dialog(
@@ -292,9 +307,12 @@ class _AddAssignmentDialogState extends State<AddAssignmentDialog> {
           children: [
             Icon(icon, size: 18, color: theme.accentColor),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(color: theme.textColor, fontWeight: FontWeight.w500),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(color: theme.textColor, fontWeight: FontWeight.w500),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

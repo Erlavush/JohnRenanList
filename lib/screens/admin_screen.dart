@@ -24,17 +24,42 @@ class AdminScreen extends StatelessWidget {
           elevation: 0,
           leading: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.arrow_back, color: theme.textColor),
+            icon: Icon(Icons.arrow_back, color: theme.navbarIconColor),
           ),
           title: Text(
             "Admin Panel",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: theme.textColor,
+              color: theme.navbarTextColor,
+              fontFamily: 'Fira Code',
             ),
           ),
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                assignmentsProvider.seedSampleData().then((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Sample data added! Check Firestore.", style: TextStyle(color: theme.textColor)),
+                      backgroundColor: theme.cardColor,
+                    ),
+                  );
+                }).catchError((e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                     SnackBar(
+                      content: Text("Error: Create DB first! ($e)", style: TextStyle(color: Colors.white)),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                });
+              },
+              icon: Icon(Icons.cloud_upload_rounded, color: theme.navbarIconColor),
+              tooltip: "Seed Sample Data",
+            ),
+            const SizedBox(width: 8),
+          ],
         ),
         body: Column(
           children: [

@@ -86,7 +86,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
       case AppTheme.light:
         return Colors.white;
       case AppTheme.maroon:
-        return const Color(0xFF6C1606);
+        return Colors.transparent; // Transparent on White Navbar
       case AppTheme.cyberpunk:
       default:
         return const Color(0xFF1A1A1A);
@@ -98,7 +98,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
       case AppTheme.light:
         return Colors.orange;
       case AppTheme.maroon:
-        return Colors.white;
+        return const Color(0xFF6C1606); // Deep Red Icon
       case AppTheme.cyberpunk:
       default:
         return const Color(0xFFFAF807); // Neon Yellow
@@ -115,7 +115,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
       case AppTheme.light:
         return null; // React has no border for light? "shadow-gray-200"
       case AppTheme.maroon:
-        return Border.all(color: Colors.white.withOpacity(0.1));
+        return Border.all(color: const Color(0xFF6C1606).withOpacity(0.2));
       case AppTheme.cyberpunk:
       default:
         return Border.all(color: const Color(0xFFFAF807).withOpacity(0.3));
@@ -135,7 +135,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> {
       case AppTheme.maroon:
         return [
            BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: const Color(0xFF6C1606).withOpacity(0.1),
             blurRadius: 10,
             spreadRadius: 1,
           )

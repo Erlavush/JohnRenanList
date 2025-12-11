@@ -58,4 +58,38 @@ class AssignmentsProvider extends ChangeNotifier {
   String generateId() {
     return const Uuid().v4();
   }
+
+  Future<void> seedSampleData() async {
+    final now = DateTime.now();
+    final samples = [
+      Assignment(
+        id: generateId(),
+        title: "Calculus Homework",
+        subject: "Math",
+        deadline: now.add(const Duration(days: 1)),
+        description: "Chapter 5 problems 1-10",
+        isUrgent: true,
+      ),
+      Assignment(
+        id: generateId(),
+        title: "History Essay",
+        subject: "History",
+        deadline: now.add(const Duration(days: 3)),
+        description: "Write about WW2 causes",
+        isUrgent: false,
+      ),
+      Assignment(
+        id: generateId(),
+        title: "Physics Project",
+        subject: "Science",
+        deadline: now.add(const Duration(days: 7)),
+        description: "Build a bridge model",
+        isUrgent: false,
+      ),
+    ];
+
+    for (var a in samples) {
+      await addAssignment(a);
+    }
+  }
 }

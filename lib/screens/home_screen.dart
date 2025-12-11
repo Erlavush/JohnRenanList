@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/theme_provider.dart';
-import '../providers/assignments_provider.dart'; // Import Provider
+import '../providers/assignments_provider.dart';
+import '../providers/theme_provider.dart';
+import '../providers/user_provider.dart';
 import '../widgets/deadline_card.dart';
 import '../widgets/theme_switcher.dart';
 import '../widgets/cyberpunk_background.dart';
@@ -42,7 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final theme = Provider.of<ThemeProvider>(context);
     // consume assignments from provider
     final assignmentsProvider = Provider.of<AssignmentsProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     final assignments = assignmentsProvider.assignments;
+    final count = assignments.length;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 500),
@@ -57,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               children: [
                 // Navbar
-                _buildNavbar(context, theme),
+                _buildNavbar(context, theme, userProvider),
 
                 // Main Content
                 Expanded(
@@ -108,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildNavbar(BuildContext context, ThemeProvider theme) {
+  Widget _buildNavbar(BuildContext context, ThemeProvider theme, UserProvider userProvider) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -137,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                              fontSize: 18, 
                              fontWeight: FontWeight.bold,
                              fontFamily: 'Inter',
-                             color: theme.textColor,
+                             color: theme.navbarTextColor,
                              height: 1.0,
                           ),
                         children: [
@@ -145,7 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           TextSpan(
                             text: "List", 
                             style: TextStyle(
-                               color: theme.currentTheme == AppTheme.light ? Colors.grey[400] : theme.accentColor
+                               // If maroon, use navbarTextColor (Deep Red), else check accent
+                               color: theme.currentTheme == AppTheme.maroon 
+                                   ? theme.navbarTextColor 
+                                   : (theme.currentTheme == AppTheme.light ? Colors.grey[400] : theme.accentColor)
                             )
                           ),
                         ]
@@ -158,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontSize: 10,
                         letterSpacing: 2.0,
                         fontWeight: FontWeight.w500,
-                        color: theme.secondaryTextColor.withOpacity(0.6),
+                        color: theme.navbarTextColor.withOpacity(0.6),
                       ),
                     )
                   ],
@@ -171,16 +178,18 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 const ThemeSwitcher(),
                 const SizedBox(width: 24),
-                // Mobile Menu Button (acts as admin link)
-                IconButton(
-                  onPressed: () {
-                     Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const AdminScreen()),
-                      );
-                  }, 
-                  icon: Icon(Icons.menu, color: theme.textColor),
-                )
+                // Admin Only Menu
+                if (userProvider.isAdmin) 
+                  IconButton(
+                    onPressed: () {
+                       Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AdminScreen()),
+                        );
+                    }, 
+                    icon: Icon(Icons.menu, color: theme.navbarIconColor),
+                    tooltip: "Secretary Access",
+                  )
               ],
             )
           ],

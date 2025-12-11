@@ -3,7 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/assignments_provider.dart';
+import 'providers/assignments_provider.dart';
+import 'providers/user_provider.dart';
 import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 // import 'firebase_options.dart'; // File not found, relying on default init
@@ -23,6 +26,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AssignmentsProvider()..init()), // Init provider
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: const JohnRenanListApp(),
     ),
@@ -74,7 +78,7 @@ class JohnRenanListApp extends StatelessWidget {
             ),
             useMaterial3: true,
           ),
-          home: const HomeScreen(),
+          home: const LoginScreen(),
         );
       },
     );

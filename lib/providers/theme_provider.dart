@@ -78,7 +78,29 @@ class ThemeProvider extends ChangeNotifier {
       case AppTheme.light:
         return Colors.white.withOpacity(0.7);
       case AppTheme.maroon:
-        return const Color(0xFF6C1606).withOpacity(0.8);
+        return Colors.white; // White navbar for Maroon
+    }
+  }
+
+  Color get navbarTextColor {
+    switch (_currentTheme) {
+      case AppTheme.cyberpunk:
+        return Colors.white;
+      case AppTheme.light:
+        return const Color(0xFF111827); // Gray-900
+      case AppTheme.maroon:
+        return const Color(0xFF6C1606); // Deep Red text on White navbar
+    }
+  }
+
+  Color get navbarIconColor {
+    switch (_currentTheme) {
+      case AppTheme.cyberpunk:
+        return const Color(0xFFFAF807); // Neon Yellow icons
+      case AppTheme.light:
+        return const Color(0xFF111827); // Black icons
+      case AppTheme.maroon:
+         return const Color(0xFF6C1606); // Deep Red icons
     }
   }
 

@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/theme_switcher.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -16,7 +20,7 @@ class SettingsScreen extends StatelessWidget {
         title: Text("Settings", style: TextStyle(fontFamily: 'Fira Code', fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: theme.navbarColor,
-        leading: BackButton(color: theme.textColor),
+        leading: BackButton(color: theme.navbarIconColor),
       ),
       body: Center(
         child: Container(
@@ -32,6 +36,32 @@ class SettingsScreen extends StatelessWidget {
                 title: "Theme Mode", 
                 trailing: const ThemeSwitcher()
               ),
+              const SizedBox(height: 12),
+              _buildSettingsTile(
+                theme,
+                icon: Icons.font_download_outlined,
+                title: "Number Font",
+                trailing: DropdownButton<String>(
+                  value: theme.numberFont,
+                  dropdownColor: theme.cardBackgroundColor,
+                  icon: Icon(Icons.arrow_drop_down, color: theme.accentColor),
+                  underline: Container(), // Remove underline
+                  items: theme.availableFonts.map((String font) {
+                    return DropdownMenuItem<String>(
+                      value: font,
+                      child: Text(
+                        font,
+                        style: TextStyle(color: theme.cardTextColor),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      theme.setNumberFont(newValue);
+                    }
+                  },
+                ),
+              ),
               
               const SizedBox(height: 32),
               _buildSectionHeader(theme, "About"),
@@ -40,13 +70,23 @@ class SettingsScreen extends StatelessWidget {
                 theme, 
                 icon: Icons.info_outline, 
                 title: "Version", 
-                subtitle: "1.0.0 (Beta)",
+                subtitle: "911.67.69 (BETA)",
               ),
                _buildSettingsTile(
                 theme, 
                 icon: Icons.code, 
                 title: "Developer", 
-                subtitle: "John Renan Labay",
+                subtitle: "Earl Josh Delgado",
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildSocialIcon(theme, "https://www.facebook.com/Prince.Earl.04/", FontAwesomeIcons.facebook),
+                    const SizedBox(width: 12),
+                    _buildSocialIcon(theme, "https://www.instagram.com/princeearl__/", FontAwesomeIcons.instagram),
+                    const SizedBox(width: 12),
+                    _buildSocialIcon(theme, "https://github.com/Erlavush", FontAwesomeIcons.github),
+                  ],
+                ),
               ),
             ],
           ),
@@ -55,6 +95,24 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildSocialIcon(ThemeProvider theme, String url, IconData icon) {
+    return InkWell(
+      onTap: () async {
+        final uri = Uri.parse(url);
+        // Force external application (browser)
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      },
+      borderRadius: BorderRadius.circular(20),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: FaIcon(icon, size: 24, color: theme.accentColor), 
+      ),
+    );
+  }
+  
+  // ... existing headers and tiles ...
   Widget _buildSectionHeader(ThemeProvider theme, String title) {
     return Text(
       title.toUpperCase(),

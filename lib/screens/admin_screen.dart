@@ -39,27 +39,6 @@ class AdminScreen extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () {
-                assignmentsProvider.seedSampleData().then((_) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Sample data added! Check Firestore.", style: TextStyle(color: theme.textColor)),
-                      backgroundColor: theme.cardColor,
-                    ),
-                  );
-                }).catchError((e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(
-                      content: Text("Error: Create DB first! ($e)", style: TextStyle(color: Colors.white)),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                });
-              },
-              icon: Icon(Icons.cloud_upload_rounded, color: theme.navbarIconColor),
-              tooltip: "Seed Sample Data",
-            ),
-            IconButton(
-              onPressed: () {
                  assignmentsProvider.importFinalsSchedule().then((_) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

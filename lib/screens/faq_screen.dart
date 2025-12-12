@@ -15,7 +15,7 @@ class FaqScreen extends StatelessWidget {
         title: Text("FAQs", style: TextStyle(fontFamily: 'Fira Code', fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: theme.navbarColor,
-        leading: BackButton(color: theme.textColor),
+        leading: BackButton(color: theme.navbarIconColor),
       ),
       body: Center(
         child: Container(
@@ -23,10 +23,7 @@ class FaqScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.all(24),
             children: [
-              _buildFaqItem(context, theme, "How do I add a task?", "Only the Class Secretary (Admin) can add tasks. If you are the secretary, use the Admin Panel."),
-              _buildFaqItem(context, theme, "Why can't I edit tasks?", "To prevent accidental deletions, tasks are read-only for students."),
-              _buildFaqItem(context, theme, "What is the secret code?", "The secret code is provided by your class representative to ensure privacy."),
-               _buildFaqItem(context, theme, "Is this valid for excused absurdity?", "No, please do your homework."),
+              _buildFaqItem(context, theme, "WHO IS JOHN RENAN LABAY?", "john renan labay is the GOAT of the BSCS 3 class"),
             ],
           ),
         ),

@@ -67,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(), 
             ),
 
+
             Column(
               children: [
                 // Navbar
@@ -130,8 +131,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildDrawer(BuildContext context, ThemeProvider theme, UserProvider userProvider) {
     return Drawer(
       backgroundColor: theme.cardBackgroundColor,
-      child: Column(
+      child: Stack(
         children: [
+          // Background Image
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.15, // Low opacity as requested
+              child: Image.asset(
+                'assets/john_renan.jpg',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              ),
+            ),
+          ),
+          
+          Column(
+            children: [
            UserAccountsDrawerHeader(
              decoration: BoxDecoration(
                color: theme.navbarColor,
@@ -211,6 +226,8 @@ class _HomeScreenState extends State<HomeScreen> {
            const SizedBox(height: 24),
         ],
       ),
+    ],
+      ),
     );
   }
 
@@ -262,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "VIBECODE ED.",
+                      "CSDS 3",
                       style: TextStyle(
                         fontSize: 10,
                         letterSpacing: 2.0,

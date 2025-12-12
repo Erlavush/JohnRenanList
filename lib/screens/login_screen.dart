@@ -90,20 +90,24 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 48),
 
                 // ID Field
+                _buildLabel(theme, "Class ID (e.g. 2023-01322)"),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _idController,
                   style: TextStyle(color: theme.cardTextColor),
-                  decoration: _buildInputDecoration(theme, "Class ID (e.g. 2023-01322)", Icons.badge_outlined),
+                  decoration: _buildInputDecoration(theme, Icons.badge_outlined),
                   validator: (val) => val!.isEmpty ? "Enter your ID" : null,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
 
                 // Secret Code Field
+                _buildLabel(theme, "Secret Code"),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _codeController,
                   obscureText: true,
                   style: TextStyle(color: theme.cardTextColor),
-                  decoration: _buildInputDecoration(theme, "Secret Code", Icons.lock_outline),
+                  decoration: _buildInputDecoration(theme, Icons.lock_outline),
                   validator: (val) => val!.isEmpty ? "Enter the class code" : null,
                 ),
                 const SizedBox(height: 32),
@@ -147,13 +151,27 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  InputDecoration _buildInputDecoration(ThemeProvider theme, String label, IconData icon) {
+  Widget _buildLabel(ThemeProvider theme, String text) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: TextStyle(
+          color: theme.accentColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _buildInputDecoration(ThemeProvider theme, IconData icon) {
     return InputDecoration(
-      labelText: label,
-      labelStyle: TextStyle(color: theme.secondaryTextColor),
       prefixIcon: Icon(icon, color: theme.accentColor),
       filled: true,
       fillColor: theme.cardBackgroundColor,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,

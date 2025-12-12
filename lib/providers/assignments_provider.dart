@@ -59,44 +59,7 @@ class AssignmentsProvider extends ChangeNotifier {
     return const Uuid().v4();
   }
 
-  Future<void> seedSampleData() async {
-    final now = DateTime.now();
-    final samples = [
-      Assignment(
-        id: generateId(),
-        title: "Calculus Homework",
-        subject: "Math",
-        deadline: now.add(const Duration(days: 1)),
-        description: "Chapter 5 problems 1-10",
-        isUrgent: true,
-      ),
-      Assignment(
-        id: generateId(),
-        title: "History Essay",
-        subject: "History",
-        deadline: now.add(const Duration(days: 3)),
-        description: "Write about WW2 causes",
-        isUrgent: false,
-      ),
-      Assignment(
-        id: generateId(),
-        title: "Physics Project",
-        subject: "Science",
-        deadline: now.add(const Duration(days: 7)),
-        description: "Build a bridge model",
-        isUrgent: false,
-      ),
-    ];
-
-    for (var a in samples) {
-      await addAssignment(a);
-    }
-  }
-
   Future<void> importFinalsSchedule() async {
-    // Clear existing assignments first (optional, but cleaner for a fresh start)
-    // For now, we just append.
-    
     // Hardcoded Finals Schedule AY 2025-2026
     final finals = [
       Assignment(
@@ -104,7 +67,15 @@ class AssignmentsProvider extends ChangeNotifier {
         title: "Modelling Defense",
         subject: "CS 3110",
         deadline: DateTime(2025, 12, 15, 10, 0),
-        description: "Venue: CIC ### (Face-to-Face)\nDeliverables: Paper, PPT, System",
+        description: "Venue: CIC ### (Face-to-Face)\nDeliverables: Paper, PPT, System\nNotes: Present to Sir Hobs.",
+        isUrgent: true,
+      ),
+      Assignment(
+        id: generateId(),
+        title: "Machine Learning Exam",
+        subject: "CSDS 314",
+        deadline: DateTime(2025, 12, 15, 10, 0),
+        description: "Venue: Online via UVE\nNotes: Opens at 10:00 AM",
         isUrgent: true,
       ),
       Assignment(
@@ -112,7 +83,7 @@ class AssignmentsProvider extends ChangeNotifier {
         title: "Contemp World Submission",
         subject: "EGE 311",
         deadline: DateTime(2025, 12, 19, 23, 59),
-        description: "Podcast Video (YouTube) & Spotify Link.\nSubmission Window: Dec 15-19.",
+        description: "Podcast Video (YouTube) & Spotify Link.\nSubmission Window: Dec 15-19.\nMode: Online Submission",
         isUrgent: false,
       ),
       Assignment(
@@ -120,15 +91,15 @@ class AssignmentsProvider extends ChangeNotifier {
         title: "BI Presentation",
         subject: "CSDS 313",
         deadline: DateTime(2025, 12, 16, 13, 0),
-        description: "Venue: CIC ###\nMain Day: Tuesday (Dec 16).\nMonday slot available for conflicted students.",
+        description: "Venue: CIC ### (Face-to-Face)\nDeliverables: Paper, PPT, Dashboard\nNotes: Main presentation day is Tuesday.",
         isUrgent: true,
       ),
       Assignment(
         id: generateId(),
         title: "Emerging Trends Pres",
         subject: "ICE 311",
-        deadline: DateTime(2025, 12, 19, 8, 0), // Assumed start time
-        description: "Venue: ONLINE (Link TBA)\nDeliverables: Paper, PPT",
+        deadline: DateTime(2025, 12, 19, 8, 0), // Time TBA, assuming morning start
+        description: "Venue: ONLINE (Link TBA)\nDeliverables: Paper, PPT\nNotes: Present to Ma'am Ivy.",
         isUrgent: true,
       ),
       Assignment(
@@ -143,8 +114,8 @@ class AssignmentsProvider extends ChangeNotifier {
         id: generateId(),
         title: "Big Data Simulation",
         subject: "CSDS 311",
-        deadline: DateTime(2025, 12, 20, 8, 0), // Assumed start time
-        description: "Venue: ONLINE (Link TBA)\nDeliverables: Paper, PPT, System, Video",
+        deadline: DateTime(2025, 12, 20, 8, 0), // Time TBA, assuming morning start
+        description: "Venue: ONLINE (Link TBA)\nDeliverables: Paper, PPT, System Demo, Video\nNotes: Present to Ma'am Ivy.",
         isUrgent: true,
       ),
     ];

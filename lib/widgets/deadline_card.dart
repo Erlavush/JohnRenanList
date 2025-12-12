@@ -170,10 +170,9 @@ class _DeadlineCardState extends State<DeadlineCard> {
             ),
             child: Text(
               dept,
-              style: TextStyle(
+              style: theme.getNumberStyle(
                 color: theme.backgroundColor,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Fira Code',
                 fontSize: 12,
               ),
             ),
@@ -192,14 +191,14 @@ class _DeadlineCardState extends State<DeadlineCard> {
               ),
               child: Text(
                 num,
-                style: TextStyle(
-                  color: theme.cardSecondaryTextColor, // Fixed: Use cardSecondary (visible on white)
+                style: theme.getNumberStyle(
+                  color: theme.cardSecondaryTextColor,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Fira Code',
                   fontSize: 12,
                 ),
               ),
-            ),
+              ),
+
         ],
       ),
     );
@@ -222,10 +221,9 @@ class _DeadlineCardState extends State<DeadlineCard> {
             children: [
               Text(
                 "$days", 
-                style: TextStyle(
-                  fontSize: 78, // Huge size
+                style: theme.getNumberStyle(
+                  fontSize: 78, 
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Fira Code',
                   height: 0.9,
                   color: theme.accentColor,
                 ),
@@ -299,14 +297,16 @@ class _DeadlineCardState extends State<DeadlineCard> {
               Positioned.fill(
                 child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 20, right: 20), 
-                    child: Text(
-                      value.toString().padLeft(2, '0'),
-                      style: TextStyle(
-                        fontSize: 60, // Increased font size
-                        fontFamily: 'Fira Code',
-                        fontWeight: FontWeight.bold,
-                        color: theme.accentColor,
+                    padding: const EdgeInsets.only(bottom: 16, right: 16, left: 4, top: 4), 
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        value.toString().padLeft(2, '0'),
+                        style: theme.getNumberStyle(
+                          fontSize: 60,
+                          fontWeight: FontWeight.bold,
+                          color: theme.accentColor,
+                        ),
                       ),
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 enum AppTheme { cyberpunk, light, maroon }
 
@@ -248,5 +249,57 @@ class ThemeProvider extends ChangeNotifier {
         return const Color(0xFF6C1606).withOpacity(0.6); // Deep Red opacity
     }
   }
+
+  // --- Typography Customization ---
+  String _numberFont = 'Merriweather'; // Default as requested
+
+  // Available fonts for the selector
+  final List<String> availableFonts = [
+    'Antic Didone',
+    'Playfair Display',
+    'Merriweather',
+    'Consolas',
+    'Fira Code',
+    'Pacifico',
+    'Rajdhani',
+  ];
+
+  String get numberFont => _numberFont;
+
+  void setNumberFont(String font) {
+    if (availableFonts.contains(font)) {
+      _numberFont = font;
+      notifyListeners();
+    }
+  }
+
+  TextStyle getNumberStyle({double? fontSize, FontWeight? fontWeight, Color? color, double? height}) {
+    // Base style properties
+    final baseStyle = TextStyle(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color,
+      height: height,
+    );
+
+    // Apply specific Google Fonts or System Fonts
+    switch (_numberFont) {
+        case 'Antic Didone':
+          return GoogleFonts.anticDidone(textStyle: baseStyle);
+        case 'Playfair Display':
+          return GoogleFonts.playfairDisplay(textStyle: baseStyle);
+        case 'Merriweather':
+          return GoogleFonts.merriweather(textStyle: baseStyle);
+        case 'Pacifico':
+          return GoogleFonts.pacifico(textStyle: baseStyle);
+        case 'Rajdhani':
+          return GoogleFonts.rajdhani(textStyle: baseStyle);
+        case 'Fira Code':
+        case 'Consolas':
+        default:
+          return baseStyle.copyWith(fontFamily: _numberFont);
+    }
+  }
 }
+
 

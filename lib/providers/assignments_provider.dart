@@ -92,4 +92,66 @@ class AssignmentsProvider extends ChangeNotifier {
       await addAssignment(a);
     }
   }
+
+  Future<void> importFinalsSchedule() async {
+    // Clear existing assignments first (optional, but cleaner for a fresh start)
+    // For now, we just append.
+    
+    // Hardcoded Finals Schedule AY 2025-2026
+    final finals = [
+      Assignment(
+        id: generateId(),
+        title: "Modelling Defense",
+        subject: "CS 3110",
+        deadline: DateTime(2025, 12, 15, 10, 0),
+        description: "Venue: CIC ### (Face-to-Face)\nDeliverables: Paper, PPT, System",
+        isUrgent: true,
+      ),
+      Assignment(
+        id: generateId(),
+        title: "Contemp World Submission",
+        subject: "EGE 311",
+        deadline: DateTime(2025, 12, 19, 23, 59),
+        description: "Podcast Video (YouTube) & Spotify Link.\nSubmission Window: Dec 15-19.",
+        isUrgent: false,
+      ),
+      Assignment(
+        id: generateId(),
+        title: "BI Presentation",
+        subject: "CSDS 313",
+        deadline: DateTime(2025, 12, 16, 13, 0),
+        description: "Venue: CIC ###\nMain Day: Tuesday (Dec 16).\nMonday slot available for conflicted students.",
+        isUrgent: true,
+      ),
+      Assignment(
+        id: generateId(),
+        title: "Emerging Trends Pres",
+        subject: "ICE 311",
+        deadline: DateTime(2025, 12, 19, 8, 0), // Assumed start time
+        description: "Venue: ONLINE (Link TBA)\nDeliverables: Paper, PPT",
+        isUrgent: true,
+      ),
+      Assignment(
+        id: generateId(),
+        title: "Applied Data Science",
+        subject: "CSDS 312",
+        deadline: DateTime(2025, 12, 19, 23, 59),
+        description: "Venue: UVE Link\nDeliverables: Video, Short Narrative",
+        isUrgent: true,
+      ),
+      Assignment(
+        id: generateId(),
+        title: "Big Data Simulation",
+        subject: "CSDS 311",
+        deadline: DateTime(2025, 12, 20, 8, 0), // Assumed start time
+        description: "Venue: ONLINE (Link TBA)\nDeliverables: Paper, PPT, System, Video",
+        isUrgent: true,
+      ),
+    ];
+
+    for (var a in finals) {
+      await addAssignment(a);
+    }
+    notifyListeners();
+  }
 }

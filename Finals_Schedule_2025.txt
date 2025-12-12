@@ -1,0 +1,80 @@
+================================================================================
+          FINALS SCHEDULE - 1ST SEMESTER, AY 2025-2026 (BSCS 3)
+================================================================================
+
+--------------------------------------------------------------------------------
+ DECEMBER 15 (MONDAY)
+--------------------------------------------------------------------------------
+[10:00 AM] :: CS 3110 - Modelling and Simulation
+    • TYPE:     Presentation / Defense
+    • VENUE:    CIC ### (Face-to-Face)
+    • DELIVERABLES:
+        - Paper
+        - Presentation PPT
+        - System Demo
+    • NOTES:    Present to Sir Hobs.
+
+[ALL WEEK] :: EGE 311 - Contemporary World
+    • TYPE:     Project Submission window (Dec 15-19)
+    • MODE:     Online Submission
+    • DELIVERABLES:
+        - Podcast Video (YouTube Link)
+        - Spotify Link
+
+--------------------------------------------------------------------------------
+ DECEMBER 15 - 16 (MONDAY & TUESDAY)
+--------------------------------------------------------------------------------
+[01:00 PM] :: CSDS 313 - Business Intelligence
+    • TYPE:     Presentation / Defense
+    • VENUE:    CIC ### (Face-to-Face)x
+    • DELIVERABLES:
+        - Paper
+        - Presentation PPT
+        - Dashboard
+    • NOTES:    
+        - Main presentation day is Tuesday.
+        - Monday slot (Dec 15) is ONLY for students with events on Tuesday (Foundation Day).
+
+--------------------------------------------------------------------------------
+ DECEMBER 19 (FRIDAY)
+--------------------------------------------------------------------------------
+[TIME TBA] :: ICE 311 - Emerging Trends and Technologies
+    • TYPE:     Online Presentation
+    • VENUE:    Online (Link TBA)
+    • DELIVERABLES:
+        - Paper
+        - Presentation PPT
+    • NOTES:    Present to Ma'am Ivy.
+
+[11:59 PM] :: CSDS 312 - Applied Data Science
+    • TYPE:     Submission Deadline
+    • VENUE:    UVE Link
+    • DELIVERABLES:
+        - Video
+        - Short Narrative
+
+[DEADLINE] :: EGE 311 - Contemporary World
+    • TYPE:     Final Submission (End of window)
+
+--------------------------------------------------------------------------------
+ DECEMBER 20 (SATURDAY)
+--------------------------------------------------------------------------------
+[TIME TBA] :: CSDS 311 - Big Data Management (Simulation)
+    • TYPE:     Online Presentation
+    • VENUE:    Online (Link TBA)
+    • DELIVERABLES:
+        - Paper
+        - Presentation PPT
+        - System Demo
+        - Video
+    • NOTES:    Present to Ma'am Ivy.
+
+================================================================================
+ COURSE CODES REFERENCE:
+ CS3110    : Modelling and Simulation
+ CSDS 313  : Business Intelligence
+ ICE 311   : Emerging Trends and Technologies
+ CSDS 312  : Applied Data Science
+ CSDS 311  : Big Data Management
+ EGE 311   : General Education Elective 1 (Contemporary World)
+================================================================================

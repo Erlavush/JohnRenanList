@@ -58,6 +58,22 @@ class AdminScreen extends StatelessWidget {
               icon: Icon(Icons.cloud_upload_rounded, color: theme.navbarIconColor),
               tooltip: "Seed Sample Data",
             ),
+            IconButton(
+              onPressed: () {
+                 assignmentsProvider.importFinalsSchedule().then((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Finals Schedule Imported! 📅", style: TextStyle(color: theme.textColor)),
+                      backgroundColor: theme.cardColor,
+                    ),
+                  );
+                 }).catchError((e) {
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
+                 });
+              },
+              icon: const Icon(Icons.event_note, color: Colors.amber),
+              tooltip: "Import Finals Schedule",
+            ),
             const SizedBox(width: 8),
           ],
         ),

@@ -8,15 +8,19 @@ import 'providers/user_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart'; // File not found, relying on default init
+import 'firebase_options.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-     // DefaultFirebaseOptions is missing, so we rely on google-services.json being present.
-     await Firebase.initializeApp();
+     if (kIsWeb) {
+       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+     } else {
+       await Firebase.initializeApp();
+     }
   } catch (e) {
       print("Firebase Init Failed: $e");
   }
@@ -26,7 +30,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AssignmentsProvider()..init()), // Init provider
-        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()..loadSession()), // Init & Load Session
       ],
       child: const JohnRenanListApp(),
     ),
@@ -78,7 +82,14 @@ class JohnRenanListApp extends StatelessWidget {
             ),
             useMaterial3: true,
           ),
-          home: const LoginScreen(),
+          home: Consumer<UserProvider>(
+            builder: (context, user, child) {
+              if (user.isLoading) {
+                 return const Scaffold(body: Center(child: CircularProgressIndicator()));
+              }
+              return user.isLoggedIn ? const HomeScreen() : const LoginScreen();
+            }
+          ),
         );
       },
     );

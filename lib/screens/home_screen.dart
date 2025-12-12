@@ -11,6 +11,9 @@ import '../widgets/theme_switcher.dart';
 import '../widgets/cyberpunk_background.dart';
 import '../widgets/animated_logo.dart';
 import 'admin_screen.dart';
+import 'settings_screen.dart';
+import 'faq_screen.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,6 +60,12 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             // Background Decor
             const CyberpunkBackground(),
+
+            // END DRAWER (Hamburger Menu)
+            Positioned(
+              right: -1000, bottom: -1000, // Hidden off screen, accessed via Scaffold property
+              child: Container(), 
+            ),
 
             Column(
               children: [
@@ -108,6 +117,94 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+        endDrawer: _buildDrawer(context, theme, userProvider),
+      ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context, ThemeProvider theme, UserProvider userProvider) {
+    return Drawer(
+      backgroundColor: theme.cardBackgroundColor,
+      child: Column(
+        children: [
+           UserAccountsDrawerHeader(
+             decoration: BoxDecoration(
+               color: theme.navbarColor,
+               border: Border(bottom: BorderSide(color: theme.accentColor, width: 2)),
+             ),
+             accountName: Text(
+               userProvider.isAdmin ? "SECRETARY ACCESS" : "STUDENT ACCESS",
+               style: TextStyle(
+                 color: theme.navbarTextColor, 
+                 fontWeight: FontWeight.bold,
+                 letterSpacing: 1.5
+               )
+             ), 
+             accountEmail: Text(
+               "ID: ${userProvider.studentId ?? 'Unknown'}",
+               style: TextStyle(color: theme.navbarTextColor.withOpacity(0.7))
+             ),
+             currentAccountPicture: CircleAvatar(
+               backgroundColor: theme.accentColor,
+               child: Icon(
+                 userProvider.isAdmin ? Icons.security : Icons.school, 
+                 color: theme.cardBackgroundColor,
+                 size: 32,
+               ),
+             ),
+           ),
+           
+           Expanded(
+             child: ListView(
+               padding: EdgeInsets.zero,
+               children: [
+                 ListTile(
+                   leading: Icon(Icons.settings, color: theme.cardTextColor),
+                   title: Text("Settings", style: TextStyle(color: theme.cardTextColor)),
+                     onTap: () {
+                     Navigator.pop(context); // Close drawer
+                     Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
+                   },
+                 ),
+                 ListTile(
+                   leading: Icon(Icons.help_outline, color: theme.cardTextColor),
+                   title: Text("FAQs", style: TextStyle(color: theme.cardTextColor)),
+                   onTap: () {
+                     Navigator.pop(context);
+                     Navigator.push(context, MaterialPageRoute(builder: (_) => const FaqScreen()));
+                   },
+                 ),
+                 if (userProvider.isAdmin) ...[
+                   const Divider(),
+                   ListTile(
+                     leading: Icon(Icons.admin_panel_settings, color: theme.panicColor),
+                     title: Text("Admin Panel", style: TextStyle(color: theme.panicColor, fontWeight: FontWeight.bold)),
+                     subtitle: Text("Manage Assignments", style: TextStyle(color: theme.panicColor.withOpacity(0.7), fontSize: 10)),
+                     onTap: () {
+                       Navigator.pop(context);
+                       Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
+                     },
+                   ),
+                 ],
+               ],
+             )
+           ),
+
+           const Divider(),
+           ListTile(
+             leading: Icon(Icons.logout, color: theme.cardTextColor),
+             title: Text("Log Out", style: TextStyle(color: theme.cardTextColor)),
+             onTap: () {
+                userProvider.logout();
+                // Navigate to Login and remove all routes
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()), 
+                  (route) => false
+                );
+             },
+           ),
+           const SizedBox(height: 24),
+        ],
       ),
     );
   }
@@ -173,25 +270,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
 
-            // Right Actions
+            // Right Actions (Hamburger to open Drawer)
             Row(
               children: [
                 const ThemeSwitcher(),
-                const SizedBox(width: 24),
-                // Admin Only Menu
-                if (userProvider.isAdmin) 
-                  IconButton(
-                    onPressed: () {
-                       Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AdminScreen()),
-                        );
-                    }, 
+                const SizedBox(width: 16),
+                Builder(
+                  builder: (context) => IconButton(
                     icon: Icon(Icons.menu, color: theme.navbarIconColor),
-                    tooltip: "Secretary Access",
-                  )
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                    tooltip: "Menu",
+                  ),
+                ),
               ],
-            )
+            ),
           ],
           ),
         ),

@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final error = userProvider.login(_idController.text, _codeController.text);
+    final error = await userProvider.login(_idController.text, _codeController.text);
 
     setState(() => _isLoading = false);
 

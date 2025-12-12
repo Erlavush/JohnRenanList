@@ -223,7 +223,7 @@ class _DeadlineCardState extends State<DeadlineCard> {
               Text(
                 "$days", 
                 style: TextStyle(
-                  fontSize: 62, // Increased size
+                  fontSize: 78, // Huge size
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Fira Code',
                   height: 0.9,
@@ -232,9 +232,9 @@ class _DeadlineCardState extends State<DeadlineCard> {
               ),
               const SizedBox(height: 4),
               Text(
-                "DAYS",
+                days == 1 ? "DAY" : "DAYS",
                 style: TextStyle(
-                  fontSize: 16, // Increased size
+                  fontSize: 22, // Larger label
                   fontWeight: FontWeight.w900,
                   color: theme.accentColor,
                 ),
@@ -281,11 +281,11 @@ class _DeadlineCardState extends State<DeadlineCard> {
 
   Widget _buildTimeBlock(ThemeProvider theme, int value, String label) {
     // Slanted Corner Style (Image 1 reference)
-    const double cornerSize = 40.0; 
+    const double cornerSize = 50.0; 
 
-    return Expanded(
+    return Expanded( // Restored Expanded to fill the gap on the right
       child: SizedBox(
-        height: 85, // Slightly decreased size
+        height: 120, // Increased height to make it "bigger"
         child: CustomPaint(
           painter: SlantedCornerPainter(
             color: theme.accentColor,
@@ -299,11 +299,11 @@ class _DeadlineCardState extends State<DeadlineCard> {
               Positioned.fill(
                 child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 15, right: 15), 
+                    padding: const EdgeInsets.only(bottom: 20, right: 20), 
                     child: Text(
                       value.toString().padLeft(2, '0'),
                       style: TextStyle(
-                        fontSize: 40, // Slightly smaller font
+                        fontSize: 60, // Increased font size
                         fontFamily: 'Fira Code',
                         fontWeight: FontWeight.bold,
                         color: theme.accentColor,
@@ -319,11 +319,11 @@ class _DeadlineCardState extends State<DeadlineCard> {
                 width: cornerSize,
                 height: cornerSize,
                 child: Align(
-                  alignment: const Alignment(0.35, 0.35),
+                  alignment: const Alignment(0.6, 0.6), // Moved further bottom-right
                   child: Text(
                     label,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 20, // Increased from 16
                       fontWeight: FontWeight.w900,
                       color: theme.cardBackgroundColor, 
                     ),

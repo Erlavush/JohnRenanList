@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:home_widget/home_widget.dart';
+import 'dart:convert';
 import '../models/assignment_model.dart';
 
 class AssignmentsProvider extends ChangeNotifier {
@@ -24,9 +26,21 @@ class AssignmentsProvider extends ChangeNotifier {
           .map((doc) => Assignment.fromFirestore(doc))
           .toList();
       notifyListeners();
+      _updateWidget();
     }, onError: (e) {
       print("Error listening to assignments: $e");
     });
+  }
+
+  Future<void> _updateWidget() async {
+    try {
+      // Use the getter 'assignments' which is already sorted
+      final jsonString = jsonEncode(assignments.map((a) => a.toJson()).toList());
+      await HomeWidget.saveWidgetData('full_schedule_json', jsonString);
+      await HomeWidget.updateWidget(name: 'WidgetProvider');
+    } catch (e) {
+      print("Error updating widget: $e");
+    }
   }
 
   @override

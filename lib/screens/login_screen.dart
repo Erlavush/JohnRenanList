@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 48),
 
                 // ID Field
-                _buildLabel(theme, "Class ID (e.g. 2023-01322)"),
+                _buildLabel(theme, "Class ID (e.g. 2023-XXXXX)"),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _idController,

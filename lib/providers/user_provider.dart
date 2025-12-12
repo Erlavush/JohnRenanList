@@ -33,8 +33,20 @@ class UserProvider extends ChangeNotifier {
 
   // Returns error message if failed, null if success
   Future<String?> login(String id, String code) async {
-    if (code.trim() != _secretCode) {
-      return "Incorrect Secret Code";
+    final inputId = id.trim();
+    final inputCode = code.trim();
+
+    // 1. Admin Auth
+    if (inputId == _adminId) {
+      if (inputCode != "earljoshdelgado") {
+        return "Incorrect Admin Password";
+      }
+    } 
+    // 2. Student Auth
+    else {
+      if (inputCode != "johnrenanlabay") {
+        return "Incorrect Secret Code";
+      }
     }
 
     if (id.trim().isEmpty) {

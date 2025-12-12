@@ -40,4 +40,16 @@ class Assignment {
       'isUrgent': isUrgent,
     };
   }
+
+  // Method to convert Assignment to Map for Widget JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'subject': subject,
+      'deadline': deadline.millisecondsSinceEpoch,
+      'description': description,
+      'isUrgent': isUrgent,
+    };
+  }
 }

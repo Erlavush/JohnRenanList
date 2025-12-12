@@ -1,40 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#6c1606"
+    android:orientation="vertical"
     android:padding="8dp">
 
     <TextView
-        android:id="@+id/widget_title"
-        android:layout_width="wrap_content"
+        android:id="@+id/widget_header"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="NEXT DEADLINE"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        android:gravity="center"
+        android:text="JOHN RENAN LIST"
+        android:textColor="#FAF807"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp"/>
 
-    <Chronometer
-        android:id="@+id/widget_chronometer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:countDown="true"
-        android:textColor="#faf807"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+    <ListView
+        android:id="@+id/widget_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:dividerHeight="8dp" />
 
     <TextView
-        android:id="@+id/widget_subject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/widget_chronometer"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dp"
-        android:text="Waiting for data..."
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="No Assignments"
         android:textColor="#FFFFFF"
-        android:textSize="14sp" />
+        android:visibility="gone" />
 
-</RelativeLayout>
+</LinearLayout>

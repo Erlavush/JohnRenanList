@@ -55,7 +55,7 @@ class ThemeProvider extends ChangeNotifier {
       case AppTheme.light:
         return const Color(0xFF111827); // Black accent
       case AppTheme.maroon:
-        return Colors.white; // White accent
+        return const Color(0xFFF59E0B); // Gold/Amber accent (visible on white)
     }
   }
 

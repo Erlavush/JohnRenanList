@@ -73,43 +73,48 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildNavbar(context, theme, userProvider),
 
                 // Main Content
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48), // px-6 py-12
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header Section
-                        _buildHeader(theme, assignments.length),
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                      constraints: const BoxConstraints(maxWidth: 800),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48), // px-6 py-12
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Header Section
+                            _buildHeader(theme, assignments.length),
 
-                        const SizedBox(height: 48),
+                            const SizedBox(height: 48),
 
-                        // Assignments Grid (Column for mobile)
-                        if (assignments.isEmpty)
-                          Center(
-                            child: Text(
-                              "NO ACTIVE TASKS",
-                              style: TextStyle(
-                                color: theme.secondaryTextColor,
-                                fontSize: 18,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          )
-                        else
-                          ...assignments.map((a) => DeadlineCard(
-                            id: a.id,
-                            title: a.title,
-                            subject: a.subject,
-                            deadline: a.deadline,
-                            description: a.description,
-                            // Recalculate urgency dynamically if needed, or trust the model
-                            // Ideally urgency is derived from deadline, but let's pass a safe value
-                            isUrgent: a.deadline.difference(DateTime.now()).inHours < 24 && !a.deadline.difference(DateTime.now()).isNegative, 
-                          )).toList(),
-                        
-                        const SizedBox(height: 80),
-                      ],
+                            // Assignments Grid (Column for mobile)
+                            if (assignments.isEmpty)
+                              Center(
+                                child: Text(
+                                  "NO ACTIVE TASKS",
+                                  style: TextStyle(
+                                    color: theme.secondaryTextColor,
+                                    fontSize: 18,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                              )
+                            else
+                              ...assignments.map((a) => DeadlineCard(
+                                id: a.id,
+                                title: a.title,
+                                subject: a.subject,
+                                deadline: a.deadline,
+                                description: a.description,
+                                // Recalculate urgency dynamically if needed, or trust the model
+                                // Ideally urgency is derived from deadline, but let's pass a safe value
+                                isUrgent: a.deadline.difference(DateTime.now()).inHours < 24 && !a.deadline.difference(DateTime.now()).isNegative, 
+                              )).toList(),
+                            
+                            const SizedBox(height: 80),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),

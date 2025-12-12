@@ -65,15 +65,25 @@ class _DeadlineCardState extends State<DeadlineCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
-    final styles = theme.getCardBorder(isPanicMode: _isPanicMode);
+    final isMaroon = theme.currentTheme == AppTheme.maroon;
     
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         color: theme.cardBackgroundColor,
-        borderRadius: BorderRadius.circular(16),
-        border: styles,
-        boxShadow: theme.getCardShadow(isPanicMode: _isPanicMode),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: theme.navbarBorderColor ?? Colors.transparent, 
+          width: 1
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: theme.accentColor.withOpacity(0.05),
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: const Offset(0, 8),
+          )
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -81,269 +91,402 @@ class _DeadlineCardState extends State<DeadlineCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Top Row: Subject & Status
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildSubjectLabel(theme),
-                if (_isPanicMode) _buildPanicBadge(theme),
-              ],
-            ),
+            // Top Badge
+            _buildSplitBadge(theme),
 
             const SizedBox(height: 16),
 
-            // Middle Row: Title & Timer
+            // Title
             Text(
               widget.title,
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
-                height: 1.2,
-                color: theme.cardTextColor,
+                height: 1.1,
+                color: theme.accentColor, // "Yellow text" as requested (Accent)
+                letterSpacing: -0.5,
               ),
             ),
             
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
             
-            _buildTimer(theme),
+            // Timer Cards (Outlined Style)
+            _buildOutlinedTimer(theme),
 
             const SizedBox(height: 24),
 
-            // Bottom Row: Info & Action
-            _buildFooter(theme),
+            // Info Rows
+            _buildInfoRow(theme, Icons.place_outlined, "Venue: ${widget.description.split('\n').firstWhere((l) => l.startsWith('Venue:'), orElse: () => 'TBA').replaceAll('Venue: ', '')}"),
+            const SizedBox(height: 8),
+            _buildInfoRow(theme, Icons.assignment_outlined, "Deliverables: ${widget.description.split('\n').firstWhere((l) => l.startsWith('Deliverables:'), orElse: () => 'None').replaceAll('Deliverables: ', '')}"),
+
+            const SizedBox(height: 32),
+
+            // Pill Footer
+            _buildPillFooter(theme),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSubjectLabel(ThemeProvider theme) {
-    Color getBg() {
-       if (_isPanicMode) {
-          if (theme.currentTheme == AppTheme.cyberpunk) return theme.panicColor.withOpacity(0.2);
-          if (theme.currentTheme == AppTheme.light) return const Color(0xFFFEE2E2); // red-100
-          if (theme.currentTheme == AppTheme.maroon) return theme.panicColor;
-       }
-       // Normal mode
-       if (theme.currentTheme == AppTheme.cyberpunk) return const Color(0xFF1A1A1A);
-       if (theme.currentTheme == AppTheme.light) return const Color(0xFFF3F4F6); // gray-100
-       if (theme.currentTheme == AppTheme.maroon) return const Color(0xFF6C1606).withOpacity(0.1); 
-       return Colors.grey;
-    }
+  Widget _buildSplitBadge(ThemeProvider theme) {
+    // Robust splitting: Try space, then hyphen, else just use the whole string as dept
+    String dept = widget.subject;
+    String num = '';
 
-    Color getText() {
-      if (_isPanicMode) {
-         if (theme.currentTheme == AppTheme.cyberpunk) return theme.panicColor;
-         if (theme.currentTheme == AppTheme.light) return const Color(0xFFB91C1C); // red-700
-         if (theme.currentTheme == AppTheme.maroon) return Colors.black;
-      }
-      // Normal mode
-      if (theme.currentTheme == AppTheme.cyberpunk) return Colors.grey;
-      if (theme.currentTheme == AppTheme.light) return const Color(0xFF4B5563); // gray-600
-      if (theme.currentTheme == AppTheme.maroon) return const Color(0xFF6C1606); // deep-red
-      return Colors.grey;
+    if (widget.subject.contains(' ')) {
+      final parts = widget.subject.split(' ');
+      dept = parts[0];
+      if (parts.length > 1) num = parts.sublist(1).join(' ');
+    } else if (widget.subject.contains('-')) {
+       final parts = widget.subject.split('-');
+       dept = parts[0];
+       if (parts.length > 1) num = parts[1];
+    } else if (widget.subject.length > 3 && widget.subject.substring(0, 2).toUpperCase() == widget.subject.substring(0, 2)) {
+      // Heuristic for things like "CS3110" -> "CS" "3110"
+      // This is a simple guess, might be better to just leave it if no separator.
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: getBg(),
-        borderRadius: BorderRadius.circular(6),
-         border: _isPanicMode && theme.currentTheme == AppTheme.cyberpunk 
-            ? Border.all(color: theme.panicColor.withOpacity(0.4)) 
-            : null,
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.transparent, 
       ),
-      child: Text(
-        widget.subject,
-        style: TextStyle(
-          fontSize: 10,
-          fontFamily: 'Fira Code',
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.0,
-          color: getText(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPanicBadge(ThemeProvider theme) {
-    Color getColor() {
-       if (theme.currentTheme == AppTheme.light || theme.currentTheme == AppTheme.maroon) return Colors.red;
-       return theme.panicColor;
-    }
-    
-    return Row(
-      children: [
-        Icon(Icons.warning_amber_rounded, size: 14, color: getColor()),
-        const SizedBox(width: 4),
-        Text(
-          "CRITICAL",
-          style: TextStyle(
-            fontSize: 10, 
-            fontWeight: FontWeight.bold, 
-            letterSpacing: 1.5,
-            color: getColor(),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Department Part (Colored)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: theme.accentColor,
+              borderRadius: num.isNotEmpty 
+                ? const BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    bottomLeft: Radius.circular(8),
+                  )
+                : BorderRadius.circular(8),
+            ),
+            child: Text(
+              dept,
+              style: TextStyle(
+                color: theme.backgroundColor,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Fira Code',
+                fontSize: 12,
+              ),
+            ),
           ),
-        ),
-      ],
+          // Number Part (Grey/Dark) - Only show if we parsed a number
+          if (num.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: theme.cardSecondaryTextColor.withOpacity(0.1), // Fixed: Use cardSecondary (visible on white)
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                ),
+                border: Border.all(color: theme.cardSecondaryTextColor.withOpacity(0.1)),
+              ),
+              child: Text(
+                num,
+                style: TextStyle(
+                  color: theme.cardSecondaryTextColor, // Fixed: Use cardSecondary (visible on white)
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Fira Code',
+                  fontSize: 12,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
-  Widget _buildTimer(ThemeProvider theme) {
+  Widget _buildOutlinedTimer(ThemeProvider theme) {
+    // Breakdown time
     final days = _timeLeft.inDays;
     final hours = _timeLeft.inHours % 24;
     final minutes = _timeLeft.inMinutes % 60;
     final seconds = _timeLeft.inSeconds % 60;
-    
-    Color getColor() {
-       if (_isPanicMode) {
-         if (theme.currentTheme == AppTheme.light) return const Color(0xFFDC2626); // red-600
-         return theme.panicColor;
-       }
-       return theme.cardTextColor;
-    }
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        // Days Section (Left Side)
         if (days > 0) ...[
-          Text(
-            "${days}d",
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Fira Code',
-              color: getColor().withOpacity(0.5),
-            ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "$days", 
+                style: TextStyle(
+                  fontSize: 62, // Increased size
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Fira Code',
+                  height: 0.9,
+                  color: theme.accentColor,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "DAYS",
+                style: TextStyle(
+                  fontSize: 16, // Increased size
+                  fontWeight: FontWeight.w900,
+                  color: theme.accentColor,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
+          
+          const SizedBox(width: 16), // Increased padding
+
+          // Separator (Two Hollow Circles)
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 6, height: 6,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: theme.accentColor, width: 2),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Container(
+                width: 6, height: 6,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: theme.accentColor, width: 2),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(width: 16), // Increased padding
         ],
-        _buildTimerSegment(hours, getColor()),
-        _buildSeparator(getColor()),
-        _buildTimerSegment(minutes, getColor()),
-        _buildSeparator(getColor()),
-        _buildTimerSegment(seconds, getColor()),
+
+        // H : M : S Boxes
+        _buildTimeBlock(theme, hours, "h"),
+        const SizedBox(width: 6),
+        _buildTimeBlock(theme, minutes, "m"),
+        const SizedBox(width: 6),
+        _buildTimeBlock(theme, seconds, "s"),
       ],
     );
   }
 
-  Widget _buildTimerSegment(int value, Color color) {
-    return Text(
-      value.toString().padLeft(2, '0'),
-      style: TextStyle(
-        fontSize: 48,
-        fontWeight: FontWeight.bold,
-        fontFamily: 'Fira Code',
-        height: 1.0,
-        color: color,
-        // Add glow for cyberpunk
-        shadows: color == const Color(0xFFFAF807) ? [
-           const BoxShadow(
-             color: Color(0xFFFAF807),
-             blurRadius: 8,
-             spreadRadius: 0,
-           )
-        ] : null,
-      ),
-    );
-  }
-  
-  Widget _buildSeparator(Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-      child: Text(
-        ":",
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'Fira Code',
-          color: color.withOpacity(0.5),
+  Widget _buildTimeBlock(ThemeProvider theme, int value, String label) {
+    // Slanted Corner Style (Image 1 reference)
+    const double cornerSize = 40.0; 
+
+    return Expanded(
+      child: SizedBox(
+        height: 85, // Slightly decreased size
+        child: CustomPaint(
+          painter: SlantedCornerPainter(
+            color: theme.accentColor,
+            backgroundColor: theme.cardBackgroundColor,
+            cornerSize: cornerSize,
+            fillCorner: true, 
+          ),
+          child: Stack(
+            children: [
+              // Number centered
+              Positioned.fill(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 15, right: 15), 
+                    child: Text(
+                      value.toString().padLeft(2, '0'),
+                      style: TextStyle(
+                        fontSize: 40, // Slightly smaller font
+                        fontFamily: 'Fira Code',
+                        fontWeight: FontWeight.bold,
+                        color: theme.accentColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // Label in bottom-right filled area: Using Alignment at 0.35 inside the corner box
+              Positioned(
+                right: 0,
+                bottom: 0,
+                width: cornerSize,
+                height: cornerSize,
+                child: Align(
+                  alignment: const Alignment(0.35, 0.35),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: theme.cardBackgroundColor, 
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildFooter(ThemeProvider theme) {
-    final borderColor = (theme.currentTheme == AppTheme.light || theme.currentTheme == AppTheme.maroon)
-        ? const Color(0xFFE5E7EB) 
-        : const Color(0xFF333333);
+  // Separator is no longer needed in this specific design preference (Image 1 has stand-alone boxes)
+  // But keeping a dummy method or removing usage in row is fine. I removed usage in Row just now.
 
-    return Container(
-      padding: const EdgeInsets.only(top: 16),
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: borderColor, style: BorderStyle.solid)), // dashed border hard to do simply, solid is fine
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                 Text(
-                   widget.description,
-                   maxLines: 2,
-                   overflow: TextOverflow.ellipsis,
-                   style: TextStyle(
-                     fontSize: 14,
-                     height: 1.5,
-                     color: theme.cardSecondaryTextColor,
-                   ),
-                 ),
-                 const SizedBox(height: 8),
-                 Row(
-                   children: [
-                     Text(
-                       "ID: ${widget.id.split('-').first}",
-                       style: TextStyle(
-                         fontFamily: 'Fira Code',
-                         fontSize: 10,
-                         fontWeight: FontWeight.bold,
-                         letterSpacing: 0.5,
-                         color: theme.cardSecondaryTextColor.withOpacity(0.6),
-                       ),
-                     ),
-                     const SizedBox(width: 12),
-                      Text(
-                       "Due: ${DateFormat('M/d/yyyy').format(widget.deadline)}",
-                       style: TextStyle(
-                         fontFamily: 'Fira Code',
-                         fontSize: 10,
-                         fontWeight: FontWeight.bold,
-                         letterSpacing: 0.5,
-                         color: theme.cardSecondaryTextColor.withOpacity(0.6),
-                       ),
-                     ),
-                   ],
-                 )
-              ],
+
+
+  Widget _buildInfoRow(ThemeProvider theme, IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: theme.accentColor), // Yellow Icon
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: theme.cardTextColor, // Main text color (usually white/black)
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPillFooter(ThemeProvider theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      // No border/gradient for this specific minimal style reference, just info + button
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Text(
+                "Due: ",
+                style: TextStyle(
+                  color: theme.cardTextColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                DateFormat('MMM d').format(widget.deadline) + " at " + DateFormat('h:mm a').format(widget.deadline),
+                style: TextStyle(
+                  color: theme.cardTextColor,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
           
-          // Arrow Button
+          // Action Arrow
           Container(
-             padding: const EdgeInsets.all(8),
-             decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.transparent, // hover effect not needed for mobile touch really
-             ),
-             child: Icon(
-               Icons.arrow_forward_rounded,
-               color: theme.currentTheme == AppTheme.cyberpunk && _isPanicMode 
-                  ? theme.panicColor 
-                  : theme.cardSecondaryTextColor,
-             ),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: theme.accentColor, // Yellow Button
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.arrow_forward,
+              color: theme.backgroundColor, // Dark arrow on yellow
+              size: 20,
+            ),
           )
         ],
       ),
     );
   }
-  
-  Color _getTimeColor(ThemeProvider theme, bool isTimer) {
-     if (_isPanicMode) {
-        if (theme.currentTheme == AppTheme.light) return const Color(0xFFDC2626);
-        return theme.panicColor;
-     }
-     return theme.cardTextColor;
+}
+
+class SlantedCornerPainter extends CustomPainter {
+  final Color color;
+  final Color backgroundColor;
+  final double cornerSize;
+  final bool fillCorner;
+
+  SlantedCornerPainter({
+    required this.color, 
+    required this.backgroundColor,
+    this.cornerSize = 25.0,
+    this.fillCorner = false,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 1. Draw the Main Shape (Stroked)
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    final double radius = 12.0;
+
+    final path = Path();
+    
+    // Top Left
+    path.moveTo(0, radius);
+    path.quadraticBezierTo(0, 0, radius, 0);
+    
+    // Top Edge
+    path.lineTo(size.width - radius, 0);
+    path.quadraticBezierTo(size.width, 0, size.width, radius);
+
+    // Right Edge - stops before corner
+    path.lineTo(size.width, size.height - cornerSize);
+    
+    // Diagonal Cut
+    path.lineTo(size.width - cornerSize, size.height);
+    
+    // Bottom Edge
+    path.lineTo(radius, size.height);
+    path.quadraticBezierTo(0, size.height, 0, size.height - radius);
+    
+    // Close
+    path.close();
+
+    canvas.drawPath(path, paint);
+
+    // 2. Draw the Corner Triangle (Filled)
+    if (fillCorner) {
+      final fillPaint = Paint()
+        ..color = color
+        ..style = PaintingStyle.fill;
+      
+      final trianglePath = Path();
+      trianglePath.moveTo(size.width - cornerSize, size.height);
+      trianglePath.lineTo(size.width, size.height - cornerSize);
+      trianglePath.lineTo(size.width, size.height); // Bottom-right corner
+      trianglePath.close();
+      
+      canvas.drawPath(trianglePath, fillPaint);
+    } else {
+       // Just the separator line if not filled
+       final separatorPaint = Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5;
+    
+      canvas.drawLine(
+        Offset(size.width - cornerSize, size.height), 
+        Offset(size.width, size.height - cornerSize), 
+        separatorPaint
+      );
+    }
   }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

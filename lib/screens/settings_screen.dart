@@ -18,34 +18,39 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: theme.navbarColor,
         leading: BackButton(color: theme.textColor),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          _buildSectionHeader(theme, "Appearance"),
-          const SizedBox(height: 16),
-          _buildSettingsTile(
-            theme, 
-            icon: Icons.palette_outlined, 
-            title: "Theme Mode", 
-            trailing: const ThemeSwitcher()
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              _buildSectionHeader(theme, "Appearance"),
+              const SizedBox(height: 16),
+              _buildSettingsTile(
+                theme, 
+                icon: Icons.palette_outlined, 
+                title: "Theme Mode", 
+                trailing: const ThemeSwitcher()
+              ),
+              
+              const SizedBox(height: 32),
+              _buildSectionHeader(theme, "About"),
+              const SizedBox(height: 16),
+               _buildSettingsTile(
+                theme, 
+                icon: Icons.info_outline, 
+                title: "Version", 
+                subtitle: "1.0.0 (Beta)",
+              ),
+               _buildSettingsTile(
+                theme, 
+                icon: Icons.code, 
+                title: "Developer", 
+                subtitle: "John Renan Labay",
+              ),
+            ],
           ),
-          
-          const SizedBox(height: 32),
-          _buildSectionHeader(theme, "About"),
-          const SizedBox(height: 16),
-           _buildSettingsTile(
-            theme, 
-            icon: Icons.info_outline, 
-            title: "Version", 
-            subtitle: "1.0.0 (Beta)",
-          ),
-           _buildSettingsTile(
-            theme, 
-            icon: Icons.code, 
-            title: "Developer", 
-            subtitle: "John Renan Labay",
-          ),
-        ],
+        ),
       ),
     );
   }

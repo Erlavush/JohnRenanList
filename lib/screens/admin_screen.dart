@@ -112,53 +112,58 @@ class AdminScreen extends StatelessWidget {
             
             // Task List
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: assignments.length,
-                separatorBuilder: (ctx, i) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final task = assignments[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: theme.cardBackgroundColor,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: theme.navbarBorderColor),
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      title: Text(
-                        task.title,
-                        style: TextStyle(
-                          color: theme.textColor,
-                          fontWeight: FontWeight.bold,
+              child: Center(
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 800),
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: assignments.length,
+                    separatorBuilder: (ctx, i) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final task = assignments[index];
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: theme.cardBackgroundColor,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: theme.navbarBorderColor),
                         ),
-                      ),
-                      subtitle: Text(
-                        "Due: ${DateFormat('MMM d, HH:mm').format(task.deadline)}",
-                        style: TextStyle(color: theme.secondaryTextColor),
-                      ),
-                      leading: CircleAvatar(
-                        backgroundColor: theme.accentColor.withOpacity(0.1),
-                        child: Text(
-                          task.subject.substring(0, 1).toUpperCase(),
-                          style: TextStyle(color: theme.accentColor, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline, color: Colors.red),
-                        onPressed: () {
-                          assignmentsProvider.deleteAssignment(task.id);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Task deleted", style: TextStyle(color: theme.textColor)),
-                              backgroundColor: theme.cardColor,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          title: Text(
+                            task.title,
+                            style: TextStyle(
+                              color: theme.textColor,
+                              fontWeight: FontWeight.bold,
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                  );
-                },
+                          ),
+                          subtitle: Text(
+                            "Due: ${DateFormat('MMM d, HH:mm').format(task.deadline)}",
+                            style: TextStyle(color: theme.secondaryTextColor),
+                          ),
+                          leading: CircleAvatar(
+                            backgroundColor: theme.accentColor.withOpacity(0.1),
+                            child: Text(
+                              task.subject.substring(0, 1).toUpperCase(),
+                              style: TextStyle(color: theme.accentColor, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete_outline, color: Colors.red),
+                            onPressed: () {
+                              assignmentsProvider.deleteAssignment(task.id);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Task deleted", style: TextStyle(color: theme.textColor)),
+                                  backgroundColor: theme.cardColor,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ],
